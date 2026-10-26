@@ -1,0 +1,4 @@
+model,epochs,optimizer,learning_rate,parameters,test_accuracy,test_accuracy_percent,batch_1_median_ms_100_runs,batch_128_median_ms_20_runs
+MLP,5,Adam,0.001,235146,0.875,87.5,0.08234987035393715,0.5528999026864767
+CNN,5,Adam,0.001,20490,0.8882,88.82,0.3623003140091896,10.315049905329943
+PatchTransformer,5,Adam,0.001,70794,0.8387,83.87,1.099900109693408,7.298350101336837

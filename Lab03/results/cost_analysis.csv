@@ -1,0 +1,4 @@
+model,torchinfo_parameters,thop_parameters,hand_calculated_flops_per_image,thop_macs_per_image,thop_flops_estimate_per_image,hand_minus_thop_percent,batch_1_median_ms_100_runs,batch_128_median_ms_20_runs
+MLP,235146,235146,469504,234752,469504,0.0,0.0709,0.41225
+CNN,20490,20490,2063488,1031744,2063488,0.0,0.3924,9.21875
+PatchTransformer,70794,3850,2329856,50816,101632,95.64,1.0445,6.15305
