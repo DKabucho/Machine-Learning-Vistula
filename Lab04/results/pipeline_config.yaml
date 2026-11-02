@@ -1,0 +1,27 @@
+dataset:
+  name: Adult
+  loader: fetch_openml
+  version: 2
+  expected_rows: 48842
+split:
+  test_size: 0.3
+  stratified: true
+  random_state: 42
+cleaning:
+  drop_exact_duplicates_from_train_only: true
+  categorical_imputation: mode
+  numeric_imputation: median
+  missing_marker: "?"
+  numeric_clipping_percentiles: [1, 99]
+features:
+  engineered: [capital_net, hours_per_age]
+model:
+  name: LogisticRegression
+  max_iter: 1000
+label_audit:
+  sample_size: 50
+  random_state: 42
+  duplicate_conflicting_feature_groups: 5
+processed_data:
+  sha256: 0256b280962fdae8e88fcfc8978a9b3fd01775e1a6cce1ba6e0942266ea1e166
+  hash_includes: transformed_train_and_test_features_labels_and_row_indices

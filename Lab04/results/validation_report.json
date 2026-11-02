@@ -1,0 +1,206 @@
+{
+  "row_count": 48842,
+  "column_count": 15,
+  "rows_dropped": 0,
+  "checks": [
+    {
+      "check": "schema columns",
+      "status": "PASS",
+      "violation_count": 0,
+      "sample_violations": [],
+      "expected_column_count": 15,
+      "observed_column_count": 15,
+      "missing_columns": [],
+      "extra_columns": [],
+      "wrong_order": false,
+      "source_label_column": "class"
+    },
+    {
+      "check": "type: age",
+      "status": "PASS",
+      "violation_count": 0,
+      "sample_violations": [],
+      "expected_type": "int",
+      "observed_dtype": "int64"
+    },
+    {
+      "check": "type: workclass",
+      "status": "PASS",
+      "violation_count": 0,
+      "sample_violations": [],
+      "expected_type": "category",
+      "observed_dtype": "category"
+    },
+    {
+      "check": "type: fnlwgt",
+      "status": "PASS",
+      "violation_count": 0,
+      "sample_violations": [],
+      "expected_type": "int",
+      "observed_dtype": "int64"
+    },
+    {
+      "check": "type: education",
+      "status": "PASS",
+      "violation_count": 0,
+      "sample_violations": [],
+      "expected_type": "category",
+      "observed_dtype": "category"
+    },
+    {
+      "check": "type: education-num",
+      "status": "PASS",
+      "violation_count": 0,
+      "sample_violations": [],
+      "expected_type": "int",
+      "observed_dtype": "int64"
+    },
+    {
+      "check": "type: marital-status",
+      "status": "PASS",
+      "violation_count": 0,
+      "sample_violations": [],
+      "expected_type": "category",
+      "observed_dtype": "category"
+    },
+    {
+      "check": "type: occupation",
+      "status": "PASS",
+      "violation_count": 0,
+      "sample_violations": [],
+      "expected_type": "category",
+      "observed_dtype": "category"
+    },
+    {
+      "check": "type: relationship",
+      "status": "PASS",
+      "violation_count": 0,
+      "sample_violations": [],
+      "expected_type": "category",
+      "observed_dtype": "category"
+    },
+    {
+      "check": "type: race",
+      "status": "PASS",
+      "violation_count": 0,
+      "sample_violations": [],
+      "expected_type": "category",
+      "observed_dtype": "category"
+    },
+    {
+      "check": "type: sex",
+      "status": "PASS",
+      "violation_count": 0,
+      "sample_violations": [],
+      "expected_type": "category",
+      "observed_dtype": "category"
+    },
+    {
+      "check": "type: capital-gain",
+      "status": "PASS",
+      "violation_count": 0,
+      "sample_violations": [],
+      "expected_type": "int",
+      "observed_dtype": "int64"
+    },
+    {
+      "check": "type: capital-loss",
+      "status": "PASS",
+      "violation_count": 0,
+      "sample_violations": [],
+      "expected_type": "int",
+      "observed_dtype": "int64"
+    },
+    {
+      "check": "type: hours-per-week",
+      "status": "PASS",
+      "violation_count": 0,
+      "sample_violations": [],
+      "expected_type": "int",
+      "observed_dtype": "int64"
+    },
+    {
+      "check": "type: native-country",
+      "status": "PASS",
+      "violation_count": 0,
+      "sample_violations": [],
+      "expected_type": "category",
+      "observed_dtype": "category"
+    },
+    {
+      "check": "type: income",
+      "status": "PASS",
+      "violation_count": 0,
+      "sample_violations": [],
+      "expected_type": "category",
+      "observed_dtype": "category"
+    },
+    {
+      "check": "range: age",
+      "status": "PASS",
+      "violation_count": 0,
+      "sample_violations": [],
+      "minimum": 17,
+      "maximum": 90
+    },
+    {
+      "check": "range: hours-per-week",
+      "status": "PASS",
+      "violation_count": 0,
+      "sample_violations": [],
+      "minimum": 1,
+      "maximum": 99
+    },
+    {
+      "check": "range: capital-gain",
+      "status": "PASS",
+      "violation_count": 0,
+      "sample_violations": [],
+      "minimum": 0,
+      "maximum": 99999
+    },
+    {
+      "check": "range: capital-loss",
+      "status": "PASS",
+      "violation_count": 0,
+      "sample_violations": [],
+      "minimum": 0,
+      "maximum": 4356
+    },
+    {
+      "check": "actual null values",
+      "status": "PASS",
+      "violation_count": 0,
+      "sample_violations": [],
+      "nulls_by_column": {
+        "workclass": 2799,
+        "occupation": 2809,
+        "native-country": 857
+      },
+      "policy": "Missing values are retained and reported; OpenML may parse the source marker '?' as pandas NA."
+    },
+    {
+      "check": "missing marker '?'",
+      "status": "PASS",
+      "violation_count": 0,
+      "sample_violations": [],
+      "marker_counts_by_column": {},
+      "policy": "'?' is counted as missing and accepted in categorical columns."
+    },
+    {
+      "check": "income label quality",
+      "status": "PASS",
+      "violation_count": 0,
+      "sample_violations": [],
+      "allowed_labels": [
+        "<=50K",
+        ">50K"
+      ],
+      "observed_labels": [
+        "<=50K",
+        ">50K"
+      ],
+      "source_column": "class"
+    }
+  ]
+}
