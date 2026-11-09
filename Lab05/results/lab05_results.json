@@ -1,0 +1,179 @@
+{
+  "environment": {
+    "python": "3.11.8",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "1.26.4",
+    "scikit_learn": "1.5.0",
+    "pytorch": "2.3.1+cpu",
+    "torch_threads": 1
+  },
+  "gradient_validation": {
+    "expression": "((a*b + c)**2).relu().sum()",
+    "input_values": [
+      0.7,
+      -1.2,
+      0.4
+    ],
+    "output": 0.19359999999999997,
+    "autodiff_gradients": [
+      1.0559999999999998,
+      -0.6159999999999999,
+      -0.8799999999999999
+    ],
+    "pytorch_gradients": [
+      1.0559999999999998,
+      -0.6159999999999999,
+      -0.8799999999999999
+    ],
+    "numerical_gradients": [
+      1.0560000000270353,
+      -0.615999999925565,
+      -0.8799999999808961
+    ],
+    "max_abs_difference_vs_pytorch": 0.0,
+    "max_abs_difference_vs_numerical": 7.443490268599362e-11,
+    "tolerance": 1e-06,
+    "passed": true
+  },
+  "training_benchmark": {
+    "dataset": "sklearn.datasets.make_moons",
+    "samples": 192,
+    "train_samples": 144,
+    "architecture": "2 -> 8 -> 1 (ReLU hidden, sigmoid output)",
+    "loss": "binary cross entropy",
+    "epochs": 10,
+    "optimizer": "SGD, learning rate 0.08",
+    "device": "CPU",
+    "custom_scalar_autodiff": {
+      "median_seconds": 1.1078565999632701,
+      "run_seconds": [
+        1.0622410000069067,
+        1.202695499989204,
+        1.1047497999388725,
+        1.2150303000817075,
+        1.1078565999632701
+      ],
+      "final_loss_per_run": [
+        0.6474529188168129,
+        0.6474529188168129,
+        0.6474529188168129,
+        0.6474529188168129,
+        0.6474529188168129
+      ],
+      "repeats": 5,
+      "examples_per_epoch": 144
+    },
+    "pytorch": {
+      "median_seconds": 0.007634600042365491,
+      "run_seconds": [
+        0.008313599973917007,
+        0.00789410003926605,
+        0.006790699902921915,
+        0.007634600042365491,
+        0.006983599974773824
+      ],
+      "final_loss_per_run": [
+        0.5790606737136841,
+        0.5790606737136841,
+        0.5790606737136841,
+        0.5790606737136841,
+        0.5790606737136841
+      ],
+      "repeats": 5,
+      "examples_per_epoch": 144
+    },
+    "speedup_pytorch_over_custom": 145.10997220753083
+  },
+  "pytorch_inspection_and_benchmarks": {
+    "graph_inspection": {
+      "method": "torch.fx.symbolic_trace",
+      "graph": "graph():\n    %inputs : 'torch.Tensor' [num_users=1] = placeholder[target=inputs]\n    %hidden : [num_users=1] = call_module[target=hidden](args = (%inputs,), kwargs = {})\n    %activation : [num_users=1] = call_module[target=activation](args = (%hidden,), kwargs = {})\n    %output : [num_users=1] = call_module[target=output](args = (%activation,), kwargs = {})\n    %sigmoid : [num_users=1] = call_function[target=torch.sigmoid](args = (%output,), kwargs = {})\n    return sigmoid",
+      "model": "Linear(2, 8) -> ReLU -> Linear(8, 1) -> sigmoid"
+    },
+    "execution_comparison": {
+      "compiled_or_traced": "torch.jit.trace",
+      "warmup_calls_per_mode": 20,
+      "input_shape": [
+        64,
+        2
+      ],
+      "input_dtype": "torch.float32",
+      "input_contiguous": true,
+      "max_abs_output_difference": 0.0,
+      "eager": {
+        "median_seconds_per_operation": 6.696900003589689e-05,
+        "sample_seconds_per_operation": [
+          7.390499988105148e-05,
+          6.696900003589689e-05,
+          6.709999986924231e-05,
+          6.68789999326691e-05,
+          6.638400023803115e-05
+        ],
+        "repeats": 5,
+        "iterations_per_repeat": 200
+      },
+      "traced": {
+        "median_seconds_per_operation": 5.9496999601833525e-05,
+        "sample_seconds_per_operation": [
+          5.705400020815432e-05,
+          5.9496999601833525e-05,
+          6.093100004363805e-05,
+          6.049600022379309e-05,
+          5.619299947284162e-05
+        ],
+        "repeats": 5,
+        "iterations_per_repeat": 200
+      },
+      "eager_over_traced_speed_ratio": 1.125586172144269
+    },
+    "layout_comparison": {
+      "base_shape": [
+        512,
+        512
+      ],
+      "view_shape": [
+        512,
+        512
+      ],
+      "view_dtype": "torch.float32",
+      "view_stride": [
+        1,
+        512
+      ],
+      "view_contiguous": false,
+      "contiguous_stride": [
+        512,
+        1
+      ],
+      "contiguous_tensor_contiguous": true,
+      "operation": "relu(tensor * 1.01)",
+      "non_contiguous": {
+        "median_seconds_per_operation": 0.00024721399997361,
+        "sample_seconds_per_operation": [
+          0.00024721399997361,
+          0.00024136600084602832,
+          0.00027198700001463294,
+          0.000250531000783667,
+          0.00024168899981305003
+        ],
+        "repeats": 5,
+        "iterations_per_repeat": 100,
+        "layout": "transpose view"
+      },
+      "contiguous": {
+        "median_seconds_per_operation": 0.0002520619996357709,
+        "sample_seconds_per_operation": [
+          0.0002724930003751069,
+          0.0002520639996509999,
+          0.00025087299989536406,
+          0.0002520619996357709,
+          0.00024090299964882434
+        ],
+        "repeats": 5,
+        "iterations_per_repeat": 100,
+        "layout": "contiguous copy of transpose"
+      },
+      "non_contiguous_over_contiguous_speed_ratio": 0.9807666380923494
+    }
+  }
+}
