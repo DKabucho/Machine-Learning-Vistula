@@ -1,0 +1,11 @@
+seed: 42
+checkpoint: ../Lab06/results/checkpoints/cnn-training-last.pt
+data_dir: ../Lab03/data
+output_dir: results
+batch_size: 256
+latency_batch_size: 1
+warmup_runs: 20
+timed_runs: 200
+accuracy_target: 0.88
+latency_target_ms: 50.0
+size_target_mb: 5.0
