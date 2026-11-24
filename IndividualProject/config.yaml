@@ -7,9 +7,20 @@ dataset:
 dataset_file: data/vehicles.csv
 output_dir: results
 test_size: 0.2
+validation_size: 0.2
 target_column: price
 minimum_price: 1000
 maximum_price: 150000
+minimum_year: 1900
+maximum_odometer: 500000
 latency_target_ms: 50.0
 size_target_mb: 5.0
 mae_target_usd: 3000.0
+models:
+  ridge:
+    alpha: 10.0
+  histogram_gradient_boosting:
+    learning_rate: 0.08
+    max_iter: 200
+    max_depth: 8
+    l2_regularization: 1.0

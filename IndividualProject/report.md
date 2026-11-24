@@ -40,16 +40,24 @@ metrics. The proposed target is **MAE no greater than $3,000**.
 These limits include preprocessing and inference in the final deployment
 measurement, not just model prediction time.
 
-## Planned optimization
+## Implemented comparison and optimization
 
-Begin with a compact histogram-gradient-boosting or linear baseline and compare
-its test error, size, and latency with a regularized linear model. If the
-stronger model does not meet the 5 MB or 50 ms limits, use a smaller feature
-set or smaller boosted model. Distillation or structured pruning may be added
-only if a larger neural baseline is evaluated and is demonstrably useful.
+The project compares a regularized Ridge baseline with a compact histogram-
+gradient-boosting model. Ridge uses median imputation, scaling, and compact
+one-hot encoding. Histogram gradient boosting uses median imputation and
+ordinal encoding. Both preprocessing and model stages are contained in a
+single serialized scikit-learn pipeline.
 
-No approach is considered successful until test accuracy, size, and latency
-have been measured with the held-out test set and deployment-like environment.
+The selected model is the candidate with the lowest validation MAE. It is then
+retrained on the combined training and validation partitions and evaluated once
+on the held-out test partition. If it exceeds the 5 MB or 50 ms limit, the next
+step is to reduce the categorical vocabulary, feature set, or boosting
+complexity and repeat the same measurements. Neural distillation or pruning is
+not included unless a larger neural baseline proves useful.
+
+No approach is considered successful until MAE, secondary metrics, size, and
+latency have been measured with the held-out test set and deployment-like CPU
+environment.
 
 ## Experimental plan
 
@@ -80,4 +88,33 @@ To train it after downloading the Kaggle file, run:
 
 ```powershell
 & '.\.venv\Scripts\python.exe' '.\IndividualProject\src\run_baseline.py'
+```
+
+## Implemented pipeline
+
+The baseline now follows a leak-safe, reproducible workflow:
+
+1. Record the raw-row count and SHA-256 hash of `vehicles.csv`.
+2. Remove invalid prices, years, and odometer values.
+3. Create deterministic 60/20/20 train, validation, and test partitions using
+   seed 42.
+4. Fit missing-value and encoding transformations only inside each model
+   pipeline.
+5. Compare regularized Ridge regression against histogram gradient boosting.
+6. Select the model with lower validation MAE, retrain it on train plus
+   validation data, and evaluate the test partition once.
+7. Measure serialized pipeline size and 200 one-row CPU requests, reporting
+   the p95 latency.
+8. Save `baseline-metrics.json` and `model-comparison.csv` for reproducible
+   reporting.
+
+This structure applies the environment and cost measurement approach from Lab
+01, leakage-safe preprocessing and validation principles from Lab 04,
+reproducible configuration and benchmarking from Lab 06, and a deterministic
+train/validation/test workflow to the tabular project.
+
+Run the focused tests with:
+
+```powershell
+& '.\.venv\Scripts\python.exe' -m pytest '.\IndividualProject\tests'
 ```

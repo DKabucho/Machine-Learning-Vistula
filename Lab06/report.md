@@ -155,15 +155,28 @@ critical missing fields will be excluded or imputed according to rules fitted
 on training data only.
 
 **Success metric.** Mean absolute error (MAE) no greater than $3,000 on a
-held-out test partition. Report median absolute error, RMSE, and R-squared as
-secondary metrics. This target is a project goal, not a measured result yet.
+held-out test partition. Final reporting will also include median absolute
+error, RMSE, R-squared, and deployment pass/fail flags. These targets remain
+pending measured results because the Kaggle CSV is not currently stored in the
+repository.
 
 **Deployment constraints.** End-to-end prediction latency no greater than
 50 ms per vehicle and serialized model plus preprocessing pipeline no greater
 than 5 MB.
 
-**Planned optimization.** Compare a regularized linear baseline with a compact
-histogram/boosted model. If the stronger model exceeds a deployment limit,
-reduce its feature and model complexity or use distillation/pruning only if a
-larger neural baseline proves useful. Measure accuracy, size, and latency on
-the target runtime rather than inferring them from parameter count.
+**Implementation and optimization.** The project now uses a reproducible
+configuration and leak-safe scikit-learn pipeline. It excludes implausible
+prices, years, and odometer values before splitting the data deterministically
+into 60% training, 20% validation, and 20% test data using seed 42. Numeric
+missing values are median-imputed, numeric features are scaled for the linear
+model, and categorical features are imputed and encoded inside each pipeline.
+
+The implementation compares Ridge regression against histogram gradient
+boosting. The lower-validation-MAE model is retrained on the training and
+validation partitions and evaluated once on the held-out test partition.
+The final pipeline reports MAE, median absolute error, RMSE, R-squared,
+serialized size, and p95 latency for 200 one-row CPU predictions. The
+comparison and test results are saved as `model-comparison.csv` and
+`baseline-metrics.json`. Unit tests cover cleaning rules, feature groups, and
+both model pipelines. The raw dataset, generated model, and generated metrics
+are intentionally excluded from Git.
