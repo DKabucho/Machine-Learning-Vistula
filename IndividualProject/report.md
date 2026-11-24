@@ -48,12 +48,19 @@ one-hot encoding. Histogram gradient boosting uses median imputation and
 ordinal encoding. Both preprocessing and model stages are contained in a
 single serialized scikit-learn pipeline.
 
+The expanded design also includes a compact tabular MLP, following the neural-
+network, automatic-differentiation, profiling, and YAML/MLflow concepts from
+Labs 2, 5, and 6. The MLP is appropriate for structured attributes, unlike a
+CNN or patch attention model, whose main benefit would come from image or text
+inputs not included in the baseline dataset.
+
 The selected model is the candidate with the lowest validation MAE. It is then
 retrained on the combined training and validation partitions and evaluated once
-on the held-out test partition. If it exceeds the 5 MB or 50 ms limit, the next
-step is to reduce the categorical vocabulary, feature set, or boosting
-complexity and repeat the same measurements. Neural distillation or pruning is
-not included unless a larger neural baseline proves useful.
+on the held-out test partition. If it exceeds the 5 MB or 50 ms limit, the
+project will evaluate quantization, pruning, categorical vocabulary reduction,
+feature reduction, or smaller MLP/boosting complexity and repeat the same
+measurements. Neural distillation is a fallback when a larger MLP improves
+validation MAE enough to justify training a compact student.
 
 No approach is considered successful until MAE, secondary metrics, size, and
 latency have been measured with the held-out test set and deployment-like CPU

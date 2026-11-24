@@ -141,9 +141,11 @@ separately recorded in MLflow.
 
 **Student ID:** 70470
 
-**Problem.** Estimate the asking price of a used car for a dealership. The
-prototype will accept structured listing attributes and return a suggested
-price for staff to review.
+**Problem.** Build a used-car price-estimation system for a dealership that
+accepts structured listing attributes and returns a suggested price for staff
+review. The project will compare interpretable, tree-based, and neural
+tabular approaches, select a deployment-feasible model, and measure the
+complete preprocessing-and-inference pipeline.
 
 **Dataset.** The Kaggle
 [Craigslist Used Cars](https://www.kaggle.com/datasets/austinreese/craigslist-carstrucks-data)
@@ -152,7 +154,8 @@ vehicle listings with a `vehicles.csv` file. Candidate features include year,
 manufacturer, model, condition, odometer, fuel, transmission, drive, type,
 paint color, and state. Records outside a documented price range or with
 critical missing fields will be excluded or imputed according to rules fitted
-on training data only.
+on training data only. The alternative-dataset approval and source, license,
+size, and bias documentation are required before implementation is submitted.
 
 **Success metric.** Mean absolute error (MAE) no greater than $3,000 on a
 held-out test partition. Final reporting will also include median absolute
@@ -164,19 +167,51 @@ repository.
 50 ms per vehicle and serialized model plus preprocessing pipeline no greater
 than 5 MB.
 
-**Implementation and optimization.** The project now uses a reproducible
-configuration and leak-safe scikit-learn pipeline. It excludes implausible
-prices, years, and odometer values before splitting the data deterministically
-into 60% training, 20% validation, and 20% test data using seed 42. Numeric
-missing values are median-imputed, numeric features are scaled for the linear
-model, and categorical features are imputed and encoded inside each pipeline.
+**Integrated implementation.** The project combines concepts from Labs 1–6:
 
-The implementation compares Ridge regression against histogram gradient
-boosting. The lower-validation-MAE model is retrained on the training and
-validation partitions and evaluated once on the held-out test partition.
-The final pipeline reports MAE, median absolute error, RMSE, R-squared,
-serialized size, and p95 latency for 200 one-row CPU predictions. The
-comparison and test results are saved as `model-comparison.csv` and
-`baseline-metrics.json`. Unit tests cover cleaning rules, feature groups, and
-both model pipelines. The raw dataset, generated model, and generated metrics
-are intentionally excluded from Git.
+* **Lab 1 system measurement:** warm up every benchmark, repeat training and
+  100 single-request inference trials, report medians, and measure peak RSS,
+  throughput, latency, and serialized size against the stated limits.
+* **Lab 2 neural-network foundations:** a compact from-scratch or PyTorch
+  tabular MLP using forward pass, backpropagation, mini-batch training,
+  learning-rate comparisons, and gradient checks where practical.
+* **Lab 3 architecture trade-offs:** compare Ridge, histogram gradient
+  boosting, and a two-hidden-layer MLP with documented parameter counts.
+  CNN and attention models are unsuitable for structured data unless listing
+  text or images are added as new inputs.
+* **Lab 4 data quality:** define schema and range checks, record violations,
+  split 60/20/20 before fitting transformations, clip numeric outliers using
+  training percentiles, deduplicate the training partition, and retain the test
+  partition unchanged. Derived features such as vehicle age and mileage per
+  year will be evaluated. The run will produce a data card, processed-data
+  SHA-256 hash, validation report, and fitted transformer.
+* **Lab 5 framework analysis:** validate MLP gradients against PyTorch
+  autograd and numerical estimates, inspect eager and traced or compiled
+  execution, and report tensor shape, dtype, contiguity, tracing, and
+  optimization overhead.
+* **Lab 6 training pipeline:** make settings configurable in YAML, log params
+  and metrics to MLflow, profile one epoch, compare data-loader workers,
+  batch sizes, optimizer/scheduler combinations, gradient accumulation, and
+  checkpoint resume, and save curves and artifacts.
+
+**Model selection.** Ridge and histogram gradient boosting provide
+interpretable and non-linear classical baselines. A tabular MLP provides a
+neural comparison. Preprocessing will be fitted inside a leakage-free pipeline.
+Candidates will be compared on validation MAE; the winner will be retrained on
+training plus validation data and tested once. The selected model must meet
+accuracy, size, and latency targets or undergo quantization, pruning,
+distillation, feature reduction, or smaller-architecture search.
+
+**Optimization plan.** First evaluate post-training quantization or a
+quantized ONNX Runtime variant for the MLP. If accuracy remains acceptable,
+report quantized size and p95 latency. If the classical model is smaller and
+faster, consider feature pruning or categorical-vocabulary compression.
+Distillation is a fallback: train a compact student from the best larger model
+and compare deployment metrics.
+
+The implementation currently provides leakage-safe cleaning, deterministic
+60/20/20 splitting, Ridge and histogram-gradient-boosting pipelines, unit
+tests, a data card, and a reproducible run command. It is extended in scope by
+the MLP, MLflow, profiling, batch/worker/optimizer studies, checkpoint resume,
+and compression stages described above. Raw data, generated models, the MLflow
+store, and measured result files remain excluded from Git.

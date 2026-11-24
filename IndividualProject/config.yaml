@@ -24,3 +24,21 @@ models:
     max_iter: 200
     max_depth: 8
     l2_regularization: 1.0
+  mlp:
+    hidden_sizes: [128, 64]
+    epochs: 20
+    batch_size: 256
+    learning_rate: 0.001
+    weight_decay: 0.0001
+    optimizer: adam
+studies:
+  num_workers: [0, 1, 2, 4, 8]
+  batch_sizes: [32, 64, 128, 256, 512]
+  optimizers: [sgd, adam]
+  schedulers: [steplr, cosineannealinglr, reducelronplateau]
+  gradient_accumulation:
+    effective_batch_size: 256
+    micro_batch_size: 64
+    accumulation_steps: 4
+tracking:
+  mlflow_tracking_uri: results/mlruns
