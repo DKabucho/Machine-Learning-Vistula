@@ -141,27 +141,29 @@ separately recorded in MLflow.
 
 **Student ID:** 70470
 
-**Problem.** Classify a clothing image into one of ten garment categories for
-an on-device cataloguing or accessibility demo. The prototype will investigate
-whether a compact image classifier can offer useful predictions without
-uploading user images to a remote service.
+**Problem.** Estimate the asking price of a used car for a dealership. The
+prototype will accept structured listing attributes and return a suggested
+price for staff to review.
 
-**Dataset.** Fashion-MNIST, with 60,000 labeled 28×28 grayscale training
-examples and a held-out 10,000-example test set. The current lab's CNN is a
-baseline; the final project will retain a fixed train/validation/test protocol
-and document the dataset's small grayscale images as a limitation for
-real-world garments.
+**Dataset.** The Kaggle
+[Craigslist Used Cars](https://www.kaggle.com/datasets/austinreese/craigslist-carstrucks-data)
+dataset (`austinreese/craigslist-carstrucks-data`), approximately 426,000
+vehicle listings with a `vehicles.csv` file. Candidate features include year,
+manufacturer, model, condition, odometer, fuel, transmission, drive, type,
+paint color, and state. Records outside a documented price range or with
+critical missing fields will be excluded or imputed according to rules fitted
+on training data only.
 
-**Success metric.** At least 88% top-1 test accuracy, with the final model
-meeting the deployment limits below. Report accuracy and batch-1 latency on the
-target deployment environment; the accuracy threshold is a project target, not
-a measured result.
+**Success metric.** Mean absolute error (MAE) no greater than $3,000 on a
+held-out test partition. Report median absolute error, RMSE, and R-squared as
+secondary metrics. This target is a project goal, not a measured result yet.
 
-**Deployment constraints.** End-to-end inference latency no greater than
-50 ms per image and serialized model size no greater than 5 MB.
+**Deployment constraints.** End-to-end prediction latency no greater than
+50 ms per vehicle and serialized model plus preprocessing pipeline no greater
+than 5 MB.
 
-**Planned optimization.** Apply post-training dynamic quantization to supported
-linear layers, then compare size, batch-1 latency, and accuracy against the
-float baseline. If the measured model still exceeds a constraint, evaluate
-structured pruning as a follow-up; any accuracy/latency claim will be measured
-on the target runtime rather than inferred from parameter count.
+**Planned optimization.** Compare a regularized linear baseline with a compact
+histogram/boosted model. If the stronger model exceeds a deployment limit,
+reduce its feature and model complexity or use distillation/pruning only if a
+larger neural baseline proves useful. Measure accuracy, size, and latency on
+the target runtime rather than inferring them from parameter count.

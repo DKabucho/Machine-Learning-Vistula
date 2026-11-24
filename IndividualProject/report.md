@@ -1,57 +1,83 @@
-# Individual Project: Compact Fashion-MNIST Classifier
+# Individual Project: Used-Car Price Estimation
 
-**Student:** Daniel Kabucho Karanja  
+**Student:** Daniel Kabucho Karanja
+
 **Student ID:** 70470
 
-## Project goal
+## Problem
 
-Evaluate whether dynamic int8 quantization can make the Lab 3 Fashion-MNIST
-CNN more deployment-friendly while preserving at least 88% test accuracy,
-keeping batch-1 p95 inference latency at or below 50 ms, and keeping serialized
-weights at or below 5 MB.
+Build a used-car price-estimation tool for a car dealership. Given listing
+details such as year, manufacturer, model, condition, mileage, fuel type,
+transmission, and location, predict the asking price in US dollars. The service
+will support dealership staff when they prepare a vehicle listing.
 
-## Baseline and dataset
+## Dataset
 
-The project reuses the Lab 3 CNN, Fashion-MNIST normalization, and official
-10,000-image test set. The five-epoch baseline checkpoint is produced by the
-Lab 6 YAML-driven training pipeline. The comparison script evaluates the
-float32 checkpoint and a dynamically quantized copy on the same test examples.
-Latency is measured on CPU after warm-up; reported model latency excludes image
-decoding and normalization, which will need separate measurement if those
-steps are part of the final deployment path.
+Use the Kaggle dataset
+[Craigslist Used Cars](https://www.kaggle.com/datasets/austinreese/craigslist-carstrucks-data),
+identified as `austinreese/craigslist-carstrucks-data`. The raw file is
+`vehicles.csv`, with approximately 426,000 listings. Because listing quality
+varies, the final work will document excluded records and data transformations.
 
-## First experiment
+Candidate predictors are `year`, `manufacturer`, `model`, `condition`,
+`odometer`, `fuel`, `transmission`, `drive`, `type`, `paint_color`, and
+`state`. Identifier, URL, image, and free-text fields are excluded from the
+baseline. Price is the target.
 
-After training the baseline, run from the repository root:
+## Success metric
+
+The primary success metric is mean absolute error (MAE) on a held-out test
+partition. Report median absolute error, RMSE, and R-squared as secondary
+metrics. The proposed target is **MAE no greater than $3,000**.
+
+## Deployment constraints
+
+- Prediction latency no greater than 50 ms per vehicle
+- Serialized model and preprocessing pipeline no greater than 5 MB
+- CPU-only first deployment
+- Structured web-form input rather than image input
+
+These limits include preprocessing and inference in the final deployment
+measurement, not just model prediction time.
+
+## Planned optimization
+
+Begin with a compact histogram-gradient-boosting or linear baseline and compare
+its test error, size, and latency with a regularized linear model. If the
+stronger model does not meet the 5 MB or 50 ms limits, use a smaller feature
+set or smaller boosted model. Distillation or structured pruning may be added
+only if a larger neural baseline is evaluated and is demonstrably useful.
+
+No approach is considered successful until test accuracy, size, and latency
+have been measured with the held-out test set and deployment-like environment.
+
+## Experimental plan
+
+1. Download `vehicles.csv` and record the file hash and row count.
+2. Use seed 42 for splitting; clean training and test data consistently.
+3. Remove implausible or missing targets and duplicate identifiers.
+4. Fit missing-value and category transformations using training data only.
+5. Compare a regularized linear baseline and a compact boosted baseline.
+6. Select the model with the lowest validation MAE that remains feasible.
+7. Apply a compact-size optimization if required.
+8. Report final test MAE, median AE, RMSE, R-squared, size, and p95 latency.
+
+## Reproducibility
+
+`config.yaml` records the dataset, split seed, target, filtering limits, and
+deployment targets. Raw data and generated results are not committed to Git.
+The final report must include Kaggle terms, dataset hash, row-count filters,
+and the exact preprocessing pipeline.
+
+Download the dataset with Kaggle authentication configured:
 
 ```powershell
-& '.\.venv\Scripts\python.exe' '.\IndividualProject\src\compare_quantization.py'
+kaggle datasets download -d austinreese/craigslist-carstrucks-data -p IndividualProject\data --unzip
 ```
 
-The script writes `IndividualProject/results/quantization-comparison.csv` and
-`.json`, with test accuracy, batch-1 median and p95 latency, serialized
-state-dict size, and pass/fail for each target. Generated outputs are ignored
-by Git; the measured values from this run are recorded below.
+The repository's baseline script expects `IndividualProject\data\vehicles.csv`.
+To train it after downloading the Kaggle file, run:
 
-| Model | Test accuracy | Median / p95 latency (ms) | State-dict size (MB) | Meets all targets |
-|---|---:|---:|---:|---|
-| Float32 CNN | 89.22% | 0.840 / 1.462 | 0.0805 | Yes |
-| Dynamic int8 CNN | 89.19% | 1.094 / 1.813 | 0.0364 | Yes |
-
-On this CPU, dynamic int8 reduced serialized state-dict size by about 54.8%
-and lowered test accuracy by 0.03 percentage points. It was slower at batch 1
-(p95 increased by 0.351 ms), though both versions are comfortably within the
-50 ms limit. Since the float model already meets the size and latency budgets,
-quantization is a viable smaller variant but not a latency optimization for
-this CNN/hardware combination. These are CPU model-only latency measurements;
-image decoding and preprocessing are excluded.
-
-## Current status
-
-The five-epoch baseline was trained on CPU. Validation accuracy rose from
-84.66% after epoch 1 to 89.84% after epoch 5. Both float and quantized models
-exceeded the 88% test accuracy target and met the stated size and latency
-budgets on this CPU. Further work should measure preprocessing-inclusive
-latency and test deployment on the intended target device before choosing the
-quantized model; if latency remains the priority, investigate a more suitable
-optimization rather than assuming quantization is faster.
+```powershell
+& '.\.venv\Scripts\python.exe' '.\IndividualProject\src\run_baseline.py'
+```

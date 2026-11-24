@@ -1,11 +1,15 @@
 seed: 42
-checkpoint: ../Lab06/results/checkpoints/cnn-training-last.pt
-data_dir: ../Lab03/data
+dataset:
+  name: Craigslist Used Cars
+  kaggle_slug: austinreese/craigslist-carstrucks-data
+  file: vehicles.csv
+  url: https://www.kaggle.com/datasets/austinreese/craigslist-carstrucks-data
+dataset_file: data/vehicles.csv
 output_dir: results
-batch_size: 256
-latency_batch_size: 1
-warmup_runs: 20
-timed_runs: 200
-accuracy_target: 0.88
+test_size: 0.2
+target_column: price
+minimum_price: 1000
+maximum_price: 150000
 latency_target_ms: 50.0
 size_target_mb: 5.0
+mae_target_usd: 3000.0
